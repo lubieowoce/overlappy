@@ -55,6 +55,12 @@ COLNAMES = [
     'matched sequence',
 ]
 
+COLNAMES_OUT = [
+    '#pattern name',
+    'Family',
+    'sequence name',
+    'hit count',
+]
 
 
 def bounds(row: dict) -> 'Tuple[int, int]':
@@ -104,10 +110,24 @@ is_repeated_2mer = lambda seq: re.match(r'^[A-Z]?([A-Z]{2})\1+[A-Z]?$', seq)
 
 
 
+def count_hits(rows: 'Sequence[dict]') -> 'Sequence[dict]':
+    return [
+        {
+            '#pattern name': pat_name,
+            'sequence name': seq_name,
+            'Family': family,
+            'hit count': len(matched_rows)
+        }
+        for ((pat_name, seq_name, family), matched_rows) in
+        group_by(rows, lambda row: (row['#pattern name'], row['sequence name'], row['Family'])).items()
+    ]
+
+
+
 import csv
 
-def csv_write_dicts(rows: 'Sequence[dict]', file, colnames=COLNAMES) -> None:
-    w = csv.DictWriter(file, colnames)
+def csv_write_dicts(rows: 'Sequence[dict]', file, colnames=COLNAMES, **kwargs) -> None:
+    w = csv.DictWriter(file, colnames, **kwargs)
     w.writerow({name: name for name in colnames})
     w.writerows(rows)
 
@@ -166,9 +186,11 @@ def main() -> None:
         for name_row_group in group_overlapping_ranges(name_rows)
     ]
 
+    counts = count_hits(no_overlaps)
+
     # write output
     with open(OUT_NAME, 'w', newline='') as out:
-        csv_write_dicts(no_overlaps, file=out)
+        csv_write_dicts(counts, file=out, colnames=COLNAMES_OUT, extrasaction='ignore')
 
 
 if __name__ == '__main__':
