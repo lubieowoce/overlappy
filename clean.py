@@ -56,19 +56,20 @@ COLNAMES = [
 ]
 
 
-def bounds(r):
-    return (r['start'], r['stop'])
+
+def bounds(row: dict) -> 'Tuple[int, int]':
+    return (row['start'], row['stop'])
 
 
 
-def range_union(a, b):
+def range_union(a: 'Tuple[int, int]', b: 'Tuple[int, int]') -> 'Tuple[int, int]':
     (a_start, a_stop) = a
     (b_start, b_stop) = b
     return (min(a_start, b_start), max(a_stop, b_stop))
 
 
 
-def group_by(xs, f):
+def group_by(xs: 'Sequence[A]', f: 'Callable[[A], B]') -> 'Dict[B, List[A]]':
     grouped = {}
     for x in xs:
         fx = f(x)
@@ -80,7 +81,7 @@ def group_by(xs, f):
 
 
 
-def group_overlapping_ranges(ranges: 'Sequence[dict]'):
+def group_overlapping_ranges(ranges: 'Sequence[dict]') -> 'List[List[dict]]':
     if not ranges:
         return []
     ranges = sorted(ranges, key=lambda r: r['start'])
@@ -105,14 +106,14 @@ is_repeated_2mer = lambda seq: re.match(r'^[A-Z]?([A-Z]{2})\1+[A-Z]?$', seq)
 
 import csv
 
-def csv_write_dicts(rows: 'Sequence[dict]', file):
-    w = csv.DictWriter(file, COLNAMES)
-    w.writerow({name: name for name in COLNAMES})
+def csv_write_dicts(rows: 'Sequence[dict]', file, colnames=COLNAMES) -> None:
+    w = csv.DictWriter(file, colnames)
+    w.writerow({name: name for name in colnames})
     w.writerows(rows)
 
 
 
-def main():
+def main() -> None:
     import sys
 
     IN_NAME, OUT_NAME = sys.argv[1:]
