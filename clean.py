@@ -1,6 +1,6 @@
 # BSD License 2.0
 
-# Copyright (c) 2020, Janka Uryga <lolzatu2@gmail.com>
+# Copyright (c) 2020, Janka Uryga <lolzatu2@gmail.com> & K. Bonter <kb689@cam.ac.uk>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
